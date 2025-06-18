@@ -6,10 +6,12 @@ include \masm32\include\windows.inc
 include \masm32\include\kernel32.inc
 include \masm32\include\user32.inc
 include \masm32\include\masm32.inc
+include \masm32\include\shell32.inc
 
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
 includelib \masm32\lib\masm32.lib
+includelib \masm32\lib\shell32.lib
 
 ; --- Prototypen ---
 validate_yaml_file PROTO
@@ -25,12 +27,16 @@ expand_appdata PROTO
     yaml_file db 256 dup(0)
     appdata_var db "APPDATA", 0
     espanso_path db "\espanso\match\assembler.yml", 0
+    espanso_folder_path db "\espanso\match", 0
+    espanso_folder db 256 dup(0)
+    open_cmd db "open", 0
     
     menu_title db "=== ESPANSO HELPER - EINFACHE VERSION ===", 13, 10, 0
     menu_option1 db "1. Neuen Eintrag hinzufügen", 13, 10, 0
     menu_option2 db "2. Alle Einträge anzeigen", 13, 10, 0
+    menu_option3 db "3. Ordner öffnen", 13, 10, 0
     menu_option0 db "0. Beenden", 13, 10, 0
-    menu_prompt db "Wähle eine Option (1, 2 oder 0): ", 0
+    menu_prompt db "Wähle eine Option (1, 2, 3 oder 0): ", 0
     msg_choice db "Deine Wahl: ", 0
     msg_invalid db "Ungültige Eingabe!", 13, 10, 0
     msg_enter_trigger db "Trigger eingeben: ", 0
@@ -78,6 +84,7 @@ main_loop:
     invoke StdOut, addr menu_title
     invoke StdOut, addr menu_option1
     invoke StdOut, addr menu_option2
+    invoke StdOut, addr menu_option3
     invoke StdOut, addr menu_option0
     invoke StdOut, addr menu_prompt
     invoke StdIn, addr input_buffer, 256
@@ -88,6 +95,8 @@ main_loop:
     je add_entry
     cmp al, '2'
     je show_entries
+    cmp al, '3'
+    je open_folder
     cmp al, '0'
     je exit_program
     invoke StdOut, addr msg_invalid
@@ -122,6 +131,11 @@ add_entry:
 
 add_entry_error:
     invoke StdOut, addr msg_error
+    jmp main_loop
+
+open_folder:
+    ; Espanso-Ordner im Explorer öffnen
+    invoke ShellExecute, NULL, addr open_cmd, addr espanso_folder, NULL, NULL, SW_SHOW
     jmp main_loop
 
 exit_program:
@@ -316,6 +330,15 @@ expand_appdata PROC
     
     ; Pfad mit "espanso\match\assembler.yml" erweitern
     invoke lstrcat, addr yaml_file, addr espanso_path
+    test eax, eax
+    jz expand_fail
+    
+    ; Ordnerpfad erstellen (ohne Dateiname)
+    invoke GetEnvironmentVariable, addr appdata_var, addr espanso_folder, 256
+    test eax, eax
+    jz expand_fail
+    
+    invoke lstrcat, addr espanso_folder, addr espanso_folder_path
     test eax, eax
     jz expand_fail
     
