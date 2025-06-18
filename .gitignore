@@ -4,6 +4,7 @@
 *.map
 *.pdb
 *.ilk
+*.res
 
 # Assembly-spezifische Dateien
 *.lst
@@ -52,4 +53,8 @@ assembler.yml
 docs/
 *.pdf
 *.doc
-*.docx 
+*.docx
+
+# Resource-Compiler temporäre Dateien
+RCa*
+*.rc~ 
