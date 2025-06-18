@@ -1,0 +1,55 @@
+# Build-Outputs
+*.exe
+*.obj
+*.map
+*.pdb
+*.ilk
+
+# Assembly-spezifische Dateien
+*.lst
+*.cod
+*.bak
+
+# Temporäre Dateien
+*.tmp
+*.temp
+*~
+
+# IDE-spezifische Dateien
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Windows-spezifische Dateien
+Thumbs.db
+Desktop.ini
+
+# Backup-Dateien
+*.backup
+*.old
+*_backup.*
+
+# Log-Dateien
+*.log
+
+# MASM32-spezifische Dateien
+*.err
+*.wrn
+
+# Espanso-Dateien (falls vorhanden)
+espanso_helper_*.yml
+assembler.yml
+
+# PowerShell-spezifische Dateien
+*.ps1.log
+
+# Git-spezifische Dateien
+.git/
+.gitattributes
+
+# Dokumentation (optional)
+docs/
+*.pdf
+*.doc
+*.docx 
